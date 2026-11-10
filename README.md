@@ -20,8 +20,8 @@ found on Lighthouse. The Lighthouse checkout is unchanged.
 2. Deploy this directory with the included Dockerfile and `railway.json`.
    The required client source is vendored directly, so no Git submodule
    initialization is needed during deployment.
-3. Set `FLIGHT_API_TOKEN` to a newly generated secret of at least 32 characters
-   in Railway Variables. Do not commit it. `.env.example` documents generation.
+3. Run the programmatic authentication setup below. It generates the shared
+   `FLIGHT_API_TOKEN`, stores it in Railway, and configures Vapi automatically.
 4. Generate the Railway public HTTPS domain. `/healthz` is the health endpoint.
 5. Test authenticated `GET /search/airports?query=SFO`, then an authenticated
    `POST /search/flights` with future dates. Use an Authorization header of
@@ -29,6 +29,37 @@ found on Lighthouse. The Lighthouse checkout is unchanged.
 6. Connect Vapi only after those requests return actual flight data. If the
    provider still returns 403, keep this service unadvertised and replace the
    provider integration with an authorized flight-data API.
+
+## Programmatic authentication setup
+
+Run the GitHub Actions workflow **Configure flight API authentication**, or run
+`python3 setup_flight_auth.py` in an environment with platform access. No Python
+packages are required. The script generates the shared secret in memory, writes
+it to Railway, creates or updates a Vapi bearer credential, and creates or updates
+the flight-search tool. It prints only status and resource IDs. It does not write
+the shared token to a file, commit, workflow artifact, or log.
+
+One-time GitHub configuration for the workflow:
+
+- Repository secrets: `RAILWAY_TOKEN` (a Railway project token) and `VAPI_API_KEY`.
+  An account/workspace token can instead be supplied as `RAILWAY_API_TOKEN`.
+- Repository variables: `RAILWAY_PROJECT_ID`, `RAILWAY_ENVIRONMENT_ID`,
+  `RAILWAY_SERVICE_ID`, and `FLIGHT_API_URL` (the bare HTTPS service origin).
+
+These are platform access credentials and resource identifiers, not a manually
+generated `FLIGHT_API_TOKEN`. Obtain platform access through authenticated account
+setup; never put API keys in repository variables or source files.
+
+Reruns reuse the Railway token and update the same Vapi resources. If a request
+fails partway through, rerun the workflow to resume. Do not run multiple setup
+processes concurrently outside this workflow. Attach the returned Vapi tool ID
+to the intended assistant. This setup does not create a phone number or place
+calls. Changes to Railway variables may trigger a new deployment.
+
+Platform APIs used:
+[Railway variable management](https://docs.railway.com/integrations/api/manage-variables),
+[Railway token types](https://docs.railway.com/integrations/api), and
+[Vapi credentials](https://docs.vapi.ai/server-url/server-authentication).
 
 The container runs one Uvicorn worker as an unprivileged user. It permits two
 concurrent searches per instance. Each search is isolated in a child process
