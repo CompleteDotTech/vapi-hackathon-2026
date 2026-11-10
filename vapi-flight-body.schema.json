@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["origin_airport_code", "destination_airport_code", "depart_date"],
+  "properties": {
+    "origin_airport_code": {"type": "string", "pattern": "^[A-Z]{3}$", "description": "Confirmed departure airport IATA code."},
+    "destination_airport_code": {"type": "string", "pattern": "^[A-Z]{3}$", "description": "Confirmed arrival airport IATA code."},
+    "depart_date": {"type": "string", "format": "date", "description": "Confirmed departure date YYYY-MM-DD, not in the past."},
+    "return_date": {"type": "string", "format": "date", "description": "Confirmed return date YYYY-MM-DD; omit for one-way."},
+    "adults": {"type": "integer", "minimum": 1, "maximum": 8, "default": 1},
+    "cabin_class": {"type": "string", "enum": ["economy", "premium_economy", "business", "first"], "default": "economy"}
+  }
+}

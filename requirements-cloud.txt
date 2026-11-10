@@ -1,0 +1,5 @@
+fastapi==0.162.2
+uvicorn==0.54.0
+curl-cffi==0.17.0
+typeguard==4.6.0
+orjson==3.13.0

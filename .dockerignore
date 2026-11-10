@@ -1,0 +1,14 @@
+*
+!Dockerfile
+!requirements-cloud.txt
+!cloud_api.py
+!cloud_worker.py
+!LICENSE
+!THIRD_PARTY_NOTICES.md
+!vendor/
+!vendor/skyscanner/
+!vendor/skyscanner/LICENSE.md
+!vendor/skyscanner/skyscanner/
+!vendor/skyscanner/skyscanner/**
+**/__pycache__
+**/*.pyc
