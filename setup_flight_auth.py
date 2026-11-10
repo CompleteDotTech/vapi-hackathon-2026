@@ -30,7 +30,7 @@ def json_request(url, headers, payload=None, method=None):
     body = json.dumps(payload).encode() if payload is not None else None
     request = urllib.request.Request(
         url, data=body, method=method,
-        headers={"Content-Type": "application/json", **headers},
+        headers={"Content-Type": "application/json", "User-Agent": "westbound-setup/1.0", **headers},
     )
     try:
         with urllib.request.build_opener(NoRedirect).open(request, timeout=30) as response:
